@@ -1,35 +1,34 @@
-/**
- * Created by orel- on 15/May/17.
- */
-const express = require('express');
-const path = require('path');
+// server.js
+// where your node app starts
 
+// we've started you off with Express (https://expressjs.com/)
+// but feel free to use whatever libraries or frameworks you'd like through `package.json`.
+const express = require("express");
 const app = express();
 
-app.use('/static', express.static(path.join(__dirname, 'static')));
+// our default array of dreams
+const dreams = [
+  "Find and count some sheep",
+  "Climb a really tall mountain",
+  "Wash the dishes"
+];
 
-app.get('/', (req, res) => {
-  res.status(200).sendFile(path.join(__dirname, 'index.html'));
+// make all the files in 'public' available
+// https://expressjs.com/en/starter/static-files.html
+app.use(express.static("public"));
+
+// https://expressjs.com/en/starter/basic-routing.html
+app.get("/", (request, response) => {
+  response.sendFile(__dirname + "/views/index.html");
 });
 
-app.listen(50451, () => {
-  console.info('Running on port 50451');
+// send the default array of dreams to the webpage
+app.get("/dreams", (request, response) => {
+  // express helps us take JS objects and send them as JSON
+  response.json(dreams);
 });
 
-// Routes
-app.use('/api/discord', require('./api/discord'));
-
-app.use((err, req, res, next) => {
-  switch (err.message) {
-    case 'NoCodeProvided':
-      return res.status(400).send({
-        status: 'ERROR',
-        error: err.message,
-      });
-    default:
-      return res.status(500).send({
-        status: 'ERROR',
-        error: err.message,
-      });
-  }
+// listen for requests :)
+const listener = app.listen(process.env.PORT, () => {
+  console.log("Your app is listening on port " + listener.address().port);
 });
